@@ -1,0 +1,16 @@
+runtime: nodejs18
+
+# Disable caching of static content so that index.html is always reloaded to allow this sample to
+# be modified and reloaded more easily. Remove this line before deploying to production to reenable
+# the default cache expiration.
+default_expiration: "0m"
+
+# Map / and /index.html to static HTML file.
+handlers:
+  - url: /
+    static_files: index.html
+    upload: index.html
+
+  - url: /index.html
+    static_files: index.html
+    upload: index.html
