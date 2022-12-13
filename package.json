@@ -1,0 +1,14 @@
+{
+    "name": "gee-node",
+    "version": "0.1.0",
+    "description": "Example GEE App",
+    "main": "server.js",
+    "dependencies": {
+        "@google/earthengine": "^0.1.334",
+        "express": "^4.18.2"
+    },
+    "scripts": {
+        "start": "node server.js"
+    },
+    "author": "Dan Lafferty"
+}
