@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Earth Engine NodeJS</title>
+    <!-- Load Maps JavaScript API. -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=<MAPS-API-KEY-GOES-HERE>=drawing"></script>
+    <!-- Load Earth Engine JS Library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/earthengine/0.1.226/earthengine-api.min.js"></script>
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Open Sans';
+            font-size: 14px;
+        }
+
+        h3 {
+            font-size: 32px;
+            font-weight: 600;
+            margin: 0;
+            box-sizing: border-box;
+            padding: 3px;
+        }
+
+        h5 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        #body-wrapper {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #header {
+            height: 6%;
+            background-color: #000000;
+            color: #86BC25;
+            text-align: center;
+        }
+
+        #content-wrapper {
+            height: 94%;
+        }
+
+        #sidebar {
+            float: right;
+            height: 100%;
+            width: 20%;
+            box-sizing: border-box;
+            padding: 10px;
+            background-color: #86BC25;
+        }
+
+        #map {
+            height: 100%;
+            width: 80%;
+        }
+
+        .box {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border: 1px solid rgba(0, 0, 0, .2);
+        }
+
+        .black {
+            background: black;
+        }
+
+        .orange {
+            background: orange;
+        }
+
+        .brown {
+            background: brown;
+        }
+
+        .light-green {
+            background: #02a50f;
+        }
+
+        .green {
+            background: green;
+        }
+
+        .yellow {
+            background: yellow;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="body-wrapper">
+        <div id="header">
+            <h3>
+                Earth Engine Frontend on Node.js
+            </h3>
+        </div>
+        <div id="content-wrapper">
+            <div id="sidebar">
+                <h5>
+                    Cropland Extent 1km Multi-Study Crop Mask, Global Food-Support Analysis Data
+                </h5>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="box black">
+                            </div>
+                        </td>
+                        <td>Non-croplands</td>
+                    </tr>
+                    <br>
+                    <tr>
+                        <td>
+                            <div class="box orange">
+                            </div>
+                        </td>
+                        <td>Croplands: irrigation major</td>
+                    </tr>
+                    <br>
+                    <tr>
+                        <td>
+                            <div class="box brown">
+                            </div>
+                        </td>
+                        <td>Croplands: irrigation minor</td>
+                    </tr>
+                    <br>
+                    <tr>
+                        <td>
+                            <div class="box light-green">
+                            </div>
+                        </td>
+                        <td>Croplands: rainfed</td>
+                    </tr>
+                    <br>
+                    <tr>
+                        <td>
+                            <div class="box green">
+                            </div>
+                        </td>
+                        <td>Croplands: rainfed, minor fragments</td>
+                    </tr>
+                    <br>
+                    <tr>
+                        <td>
+                            <div class="box yellow">
+                            </div>
+                        </td>
+                        <td>Croplands: rainfed, very minor fragments</td>
+                    </tr>
+                </tbody>
+            </div>
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <script>
+        // Initializes Maps JavaScript API and adds an Earth Engine tile source to the map.
+        const initialize = (mapid) => {
+            // Get a reference to the placeholder DOM element to contain the map.
+            const mapContainerEl = document.getElementById("map");
+
+            // Create an interactive map inside the placeholder DOM element.
+            const embeddedMap = new google.maps.Map(mapContainerEl, {
+                // Pan and zoom initial map viewport to Grand Canyon.
+                center: {
+                    lng: 6.5,
+                    lat: 48.5
+                },
+                zoom: 5,
+                disableDefaultUI: true,
+            });
+
+            //Create options for MAps drawing
+            const drawingManager = new google.maps.drawing.DrawingManager({
+                drawingMode: google.maps.drawing.OverlayType.MARKER,
+                drawingControl: true,
+                drawingControlOptions: {
+                    position: google.maps.ControlPosition.TOP_CENTER,
+                    drawingModes: [
+                        google.maps.drawing.OverlayType.MARKER,
+                        google.maps.drawing.OverlayType.POLYGON,
+                    ],
+                }
+            });
+
+            //Add drawing options to Map
+            drawingManager.setMap(embeddedMap);
+
+
+            // Create a new tile source to fetch visible tiles on demand and displays them on the map.
+            const tileSource = new ee.layers.EarthEngineTileSource({
+                mapid,
+            });
+            const overlay = new ee.layers.ImageOverlay(tileSource);
+            embeddedMap.overlayMapTypes.push(overlay);
+        };
+
+        // Fetch a valid mapid from the remote web service defined in server.js.
+        fetch("/mapid")
+            .then((response) => response.text())
+            .then((mapid) => initialize(mapid));
+
+    </script>
+
+</body>
+
+</html>
